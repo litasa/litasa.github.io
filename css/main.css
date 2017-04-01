@@ -1,43 +1,53 @@
-body {
-    margin: 60px auto;
-    width: 70%;
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
-nav ul, footer ul {
-    font-family:'Helvetica', 'Arial', 'Sans-Serif';
-    padding: 0px;
-    list-style: none;
-    font-weight: bold;
+
+
+
+
+.color-3 {
+    background: #f2f2f2;
 }
-nav ul li, footer ul li {
-    display: inline;
-    margin-right: 20px;
+
+html,body {
+    background: #d1d1d1;
+    font-family: 'Open Sans',sans-serif;
+    font-size: 24px;
+    margin: 0;
 }
+
 a {
     text-decoration: none;
-    color: #999;
+    -webkit-transition: color 0.25s ease-in,background 0.25s ease-in;
+    -moz-transition: color 0.25s ease-in,background 0.25s ease-in;
+    -o-transition: color 0.25s ease-in,background 0.25s ease-in;
+    transition: color 0.25s ease-in,background 0.25s ease-in;
 }
-a:hover {
-    text-decoration: underline;
-}
-h1 {
-    font-size: 3em;
-    font-family:'Helvetica', 'Arial', 'Sans-Serif';
-}
+
 p {
-    font-size: 1.5em;
-    line-height: 1.4em;
-    color: #333;
-}
-footer {
-    border-top: 1px solid #d5d5d5;
-    font-size: .8em;
+    line-height: 1.4;
 }
 
-ul.posts { 
-    margin: 20px auto 40px; 
-    font-size: 1.5em;
+.category {
+    color: #ccc;
+    position: absolute;
+    right: 0.75em;
+    top: 0.75em;
 }
 
-ul.posts li {
-    list-style: none;
+.date {
+    color: #ccc;
+    position: absolute;
+    left: 0.75em;
+    top: 0.75em;
+}
+
+.module {
+    color: #212121;
+    margin: 0.5em;
+    overflow: hidden;
+    padding: 1.5em;
+    position: relative;
 }

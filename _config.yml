@@ -1,3 +1,8 @@
 name: Jakob Törmä Ruhl
 markdown: kramdown
 permalink: /blog/:year/:month/:day/:title
+
+#Gems
+gems: [jekyll-paginate]
+paginate: 10
+paginate_path: "/page:num/"
