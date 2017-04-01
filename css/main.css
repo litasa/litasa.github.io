@@ -4,10 +4,7 @@
     box-sizing: border-box;
 }
 
-
-
-
-.color-3 {
+.color {
     background: #f2f2f2;
 }
 
@@ -16,6 +13,8 @@ html,body {
     font-family: 'Open Sans',sans-serif;
     font-size: 24px;
     margin: 0;
+    padding-left: 50px;
+    padding-right: 50px;
 }
 
 a {
@@ -50,4 +49,20 @@ p {
     overflow: hidden;
     padding: 1.5em;
     position: relative;
+}
+
+.card {
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px; /* 5px rounded corners */
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+/* Add some padding inside the card container */
+.card-content {
+    padding: 2px 16px;
 }

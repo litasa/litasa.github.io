@@ -3,18 +3,6 @@ layout: default
 title: My Blog
 ---
 
-<!-- This loops through the paginated posts -->
-{% for post in paginator.posts %}
-<article class='module color-3'>
-	<header>
-		<span class='category'>{{ post.categories | array_to_sentence_string }}</span>
-		<span class='date'>{{ post.date | date_to_string }}</span>
-		<h2>
-			<a href='{{ fullUrl }}{{ post.url }}' title='{{ post.title }}'>
-            	{{ post.title }}
-            </a>
-		</h2>
-	</header>
-  <p>{{ post.excerpt | strip_html | truncate: 250 }}</p>
-</article>
-{% endfor %}
+{% include projects.html %}
+
+{% include post_creator.html %}
