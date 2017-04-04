@@ -4,17 +4,11 @@
     box-sizing: border-box;
 }
 
-.color {
-    background: #f2f2f2;
-}
-
 html,body {
-    background: #d1d1d1;
+    background: #f2f2f2;
     font-family: 'Open Sans',sans-serif;
     font-size: 24px;
     margin: 0;
-    padding-left: 50px;
-    padding-right: 50px;
 }
 
 a {
@@ -27,6 +21,10 @@ a {
 
 p {
     line-height: 1.4;
+}
+
+.main_page {
+    margin: 0.5em;
 }
 
 .category {
@@ -49,20 +47,162 @@ p {
     overflow: hidden;
     padding: 1.5em;
     position: relative;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.8);
+    transition: 0.3s;
+    border-radius: 5px; /* 5px rounded corners */
+}
+.module:not(.nohover):hover {  
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.8);
 }
 
 .card {
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.8);
     transition: 0.3s;
     border-radius: 5px; /* 5px rounded corners */
+    max-height: 150em;
 }
 
 /* On mouse-over, add a deeper shadow */
 .card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.8);
 }
 
 /* Add some padding inside the card container */
 .card-content {
     padding: 2px 16px;
+}
+
+#foot ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+#foot li {
+  display: inline-block;
+}
+
+#foot li:not(:first-child):before {
+    content: " | ";
+}
+
+/*
+ * Sidebar
+ *
+ * Flexible banner for housing site name, intro, and "footer" content. Starts
+ * out above content in mobile and later moves to the side with wider viewports.
+ */
+
+.sidebar {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: rgba(255,255,255,.5);
+  background-color: #202020;
+}
+@media (min-width: 48em) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 12rem;
+    text-align: left;
+  }
+}
+
+/* Sidebar links */
+.sidebar a {
+  color: #fff;
+}
+
+/* About section */
+.sidebar-about h1 {
+  color: #fff;
+  margin-top: 0;
+  font-family: "Abril Fatface", serif;
+  font-size: 1.25rem;
+}
+
+/* Sidebar nav */
+.sidebar-nav {
+  margin-bottom: 1rem;
+}
+.sidebar-nav-item {
+  display: block;
+  line-height: 1.75;
+}
+a.sidebar-nav-item:hover,
+a.sidebar-nav-item:focus {
+  text-decoration: underline;
+}
+.sidebar-nav-item.active {
+  font-weight: bold;
+}
+
+/* Sticky sidebar
+ *
+ * Add the `sidebar-sticky` class to the sidebar's container to affix it the
+ * contents to the bottom of the sidebar in tablets and up.
+ */
+
+@media (min-width: 48em) {
+  .sidebar-sticky {
+    position: absolute;
+    right:  1rem;
+    top: 1rem;
+    left:   1rem;
+  }
+}
+
+
+/* Container
+ *
+ * Align the contents of the site above the proper threshold with some margin-fu
+ * with a 25%-wide `.sidebar`.
+ */
+
+.content {
+  padding-bottom: 4rem;
+}
+
+@media (min-width: 48em) {
+  .content {
+    margin-left: 12rem;
+    max-width: 52rem;
+  }
+}
+
+@media (min-width: 64em) {
+  .content {
+    margin-left: 12rem;
+    max-width: 52rem;
+  }
+}
+
+
+/*
+ * Reverse layout
+ *
+ * Flip the orientation of the page by placing the `.sidebar` on the right.
+ */
+
+@media (min-width: 48em) {
+  .layout-reverse .sidebar {
+    left: auto;
+    right: 0;
+  }
+  .layout-reverse .content {
+    margin-left: 2rem;
+    margin-right: 20rem;
+  }
+}
+
+@media (min-width: 64em) {
+  .layout-reverse .content {
+    margin-left: 4rem;
+    margin-right: 22rem;
+  }
+}
+
+.pagination {
+    float: right;
 }

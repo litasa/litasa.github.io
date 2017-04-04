@@ -4,12 +4,18 @@
 		<link rel="stylesheet" href="{{ "/css/main.css" | prepend: site.baseurl }}">
     	<link rel="stylesheet" href="{{ "/css/gridism.css" | prepend: site.baseurl }}">
 		<link href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet" type="text/css">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
 	</head>
 	<body>
-		<div class="grid">
-		{% include header.html %}
-		{{ content }}
-		{% include footer.html %}
+		{% include sidebar.html %}
+		<div class="content container">
+			<div class="main_page">
+			<div class="grid">
+			{% include header.html %}
+				{{ content }}
+			</div>
+			{% include footer.html %}
+			</div>
 		</div>
 	</body>
 </html>

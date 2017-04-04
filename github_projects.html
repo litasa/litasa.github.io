@@ -1,14 +1,17 @@
-<div class="unit-whole">
+---
+layout: default
+title: My Projects
+sidebar: page
+---
 
-<div id="projects">
-    <h4>Projects</h4>
-    <div class="grid">
+<div id="projects" class="unit-whole">
         {% for project in site.data.projects %}
-        <div class="unit one-third">
-            <div class="card">
+        <div class="grid" style="padding-top: 50px">
+            <div class="card unit-whole">
                 <div class="card-content">
                     <h3> {{project.name}} </h3>
-                    <p> {{project.description}} </p>
+                    <p> {{project.description | strip_html | truncate: 150 }} </p>
+                    <p> {{ project.link }}
                 </div>
                 <div class="card-action">
                     <a href="{{ project.link }}" class="button"></a>
@@ -17,7 +20,4 @@
             </div>
         </div>
         {% endfor %}
-    </div>
-</div>
-
 </div>
