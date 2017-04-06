@@ -7,3 +7,5 @@ gems: [jekyll-paginate]
 paginate: 5
 paginate_path: "/page:num/"
 
+sort_tag: '/blog/sort_tag/'
+sort_date: '/blog/sort_date'
