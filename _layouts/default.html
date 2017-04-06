@@ -4,7 +4,7 @@
 		<link rel="stylesheet" href="{{ "/css/main.css" | prepend: site.baseurl }}">
     	<link rel="stylesheet" href="{{ "/css/gridism.css" | prepend: site.baseurl }}">
 		<link href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet" type="text/css">
-		<link href='http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="{{ "/css/font-awesome.min.css" | prepend: site.baseurl }}">
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 	</head>
 	<body>
@@ -15,7 +15,7 @@
 			{% include header.html %}
 				{{ content }}
 			</div>
-			{% include footer.html %}
+			{% include contact.html %}
 			</div>
 		</div>
 	</body>

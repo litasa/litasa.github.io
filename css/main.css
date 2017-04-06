@@ -72,6 +72,19 @@ p {
     padding: 2px 16px;
 }
 
+#contact ul {
+  list-style: none;
+  margin: 0;
+  padding-left: 1em;
+}
+#contact li {
+  display: inline-block;
+}
+
+#contact li:not(:first-child):before {
+    content: " | ";
+}
+
 #foot ul {
   list-style: none;
   margin: 0;
@@ -230,4 +243,9 @@ a.sidebar-nav-item:focus {
 
 #tag-list ul {
   display: inline-block;
+}
+
+#to_bottom {
+  position: absolute;
+  bottom: 1em;
 }

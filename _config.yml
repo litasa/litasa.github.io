@@ -2,8 +2,13 @@ name: Jakob Törmä Ruhl
 markdown: kramdown
 permalink: /blog/:year/:month/:day/:title
 
+twitter_username:     Litasa
+github_username:      litasa
+linkedin_username:    jakob-ruhl
+email: jakob.ruhl@gmail.com
+
 #Gems
-gems: [jekyll-paginate]
+gems: [jekyll-paginate, jekyll-sitemap, jekyll-feed]
 paginate: 5
 paginate_path: "/page:num/"
 
