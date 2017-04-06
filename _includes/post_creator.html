@@ -2,7 +2,15 @@
 {% for post in paginator.posts %}
 	<article class='module color'>
 		<header>
-			<span class='category'>{{ post.categories | array_to_sentence_string }}</span>
+      {% if post.tags != empty%}
+      <div id="tag-list" class="category">
+        <ul>
+        {% for tag in post.tags %}
+			  <li><a class="post-tag" href="{{site.sort_tag}}#{{ tag | slugify }}">{{ tag }}</a></li>
+        {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
 			<span class='date'>{{ post.date | date_to_string }}</span>
 			<h2>
 				<a href='{{ fullUrl }}{{ post.url }}' title='{{ post.title }}'>

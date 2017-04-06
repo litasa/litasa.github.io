@@ -5,6 +5,15 @@ title: My Blog
 <div class="a-post">
     
         <article class="module color nohover">
+            {% if page.tags != empty%}
+      <div id="tag-list" class="category">
+        <ul>
+        {% for tag in page.tags %}
+			  <li><a class="post-tag" href="{{site.sort_tag}}#{{ tag | slugify }}">{{ tag }}</a></li>
+        {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
         
             <h1>{{ page.title }}</h1>
             <div class='separator'></div>
