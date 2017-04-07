@@ -1,27 +1,33 @@
----
-layout: default
-title: My Blog
----
-<div class="a-post">
-    
-        <article class="module color nohover">
-            {% if page.tags != empty%}
-      <div id="tag-list" class="category">
-        <ul>
-        {% for tag in page.tags %}
-			  <li><a class="post-tag" href="{{site.sort_tag}}#{{ tag | slugify }}">{{ tag }}</a></li>
+<section class="page__reactions">
+  {% if site.repository and site.staticman.branch %}
+    {% if site.data.comments[page.slug] %}
+      <!-- Start static comments -->
+      <div id="comments" class="js-comments">
+        <h2 class="page__section-label">
+          {% if site.data.comments[page.slug].size > 1 %}
+            {{ site.data.comments[page.slug] | size }}
+          {% endif %}
+          Comments
+        </h2>
+        {% assign comments = site.data.comments[page.slug] | where_exp: 'item', 'item.replying_to == blank' %}
+        {% for comment in comments %}
+          {% assign index       = forloop.index %}
+          {% assign r           = comment.replying_to %}
+          {% assign replying_to = r | to_integer %}
+          {% assign avatar      = comment.avatar %}
+          {% assign email       = comment.email %}
+          {% assign name        = comment.name %}
+          {% assign url         = comment.url %}
+          {% assign date        = comment.date %}
+          {% assign message     = comment.message %}
+          {% include comment.html index=index replying_to=replying_to avatar=avatar email=email name=name url=url date=date message=message %}
         {% endfor %}
-        </ul>
       </div>
-      {% endif %}
-        
-            <h1>{{ page.title }}</h1>
-            <div class='separator'></div>
-            
-            {{ content }}
-            
-            <p class="return_top"><small><a href="#top">[top]</a></small></p>
-            <!-- Start new comment form -->
+      <!-- End static comments -->
+    {% endif %}
+
+    {% unless page.comments_locked == true %}
+      <!-- Start new comment form -->
       <div id="respond">
         <h2 class="page__section-label">Leave a Comment <small><a rel="nofollow" id="cancel-comment-reply-link" href="{{ page.url | absolute_url }}#respond" style="display:none;">Cancel reply</a></small></h2>
         <form id="comment-form" class="page__form js-form form" method="post" action="https://api.staticman.net/v2/entry/{{ site.repository }}/{{ site.staticman.branch }}/comments">
@@ -67,5 +73,9 @@ title: My Blog
         </form>
       </div>
       <!-- End new comment form -->
-        </article>
-</div>
+      <script src="https://www.google.com/recaptcha/api.js"></script>
+    {% else %}
+      <p><em>Comments are closed. If you have a question concerning the content of this page, please feel free to <a href="{{ site.url }}/contact/">contact me</a>.</em></p>
+    {% endunless %}
+  {% endif %}
+</section>
