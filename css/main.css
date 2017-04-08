@@ -57,9 +57,7 @@ p {
 
 .card {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.8);
-    transition: 0.3s;
     border-radius: 5px; /* 5px rounded corners */
-    max-height: 150em;
 }
 
 /* On mouse-over, add a deeper shadow */
@@ -245,9 +243,43 @@ a.sidebar-nav-item:focus {
   display: inline-block;
 }
 
-
-
 #to_bottom {
   position: absolute;
   bottom: 1em;
+}
+
+.a-comment {
+  position: relative;
+  background: beige;
+  margin-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+.comment-user::before {
+  content: "\f2bd";
+  font-family: FontAwesome;
+  padding-right: .5em;
+  padding-left: .5em;
+}
+
+.comment-date {
+  position: absolute;
+  top: .5em;
+  right: .5em;
+  font-size: 50%;
+}
+
+.comment-hr {
+  height: 1px;
+  margin: 5px 0;
+  background: -webkit-gradient(linear, 0 0, 100% 0, from(rgba(0, 0, 0, 0)), color-stop(0.5, #333333), to(rgba(0, 0, 0, 0)));
+  background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0), #333333, rgba(0, 0, 0, 0));
+  background: -moz-linear-gradient(left, rgba(0, 0, 0, 0), #333333, rgba(0, 0, 0, 0));
+  background: -o-linear-gradient(left, rgba(0, 0, 0, 0), #333333, rgba(0, 0, 0, 0));
+  background: linear-gradient(left, rgba(0, 0, 0, 0), #333333, rgba(0, 0, 0, 0));
+  border: 0;
+}
+
+.comment-message {
+  margin: 1em;
 }

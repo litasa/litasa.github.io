@@ -21,6 +21,39 @@ title: My Blog
             {{ content }}
             
             <p class="return_top"><small><a href="#top">[top]</a></small></p>
+
+{% if site.data.comments[page.slug] %}
+      <!-- Start static comments -->
+      <div id="comments" class="js-comments">
+        <h2 class="page__section-label">
+          {% if site.data.comments[page.slug].size > 1 %}
+            {{ site.data.comments[page.slug] | size }}
+          {% endif %}
+          Comments
+        </h2>
+        {% assign comments = site.data.comments[page.slug]%}
+        {% for comment in comments %}
+          {% assign index       = forloop.index %}
+          {% assign r           = comment[1].replying_to %}
+          {% assign replying_to = r | to_integer %}
+          {% assign avatar      = comment[1].avatar %}
+          {% assign email       = comment[1].email %}
+          {% assign name        = comment[1].name %}
+          {% assign url         = comment[1].url %}
+          {% assign date        = comment[1].date %}
+          {% assign message     = comment[1].message %}
+          <div class="a-comment card">
+            <div class="comment-user"> {{ name }}</div>
+            <time class="comment-date" datetime="{{ date | time_tag }}">{{ date | date: "%d %b, %Y" }}</time>
+            <hr class="comment-hr"/>
+            <div class="comment-message">{{ message }}</div>
+          </div>
+        {% endfor %}
+      </div>
+      <!-- End static comments -->
+    {% endif %}
+
+
             <!-- Start new comment form -->
       <div id="respond">
         <h2 class="page__section-label">Leave a Comment <small><a rel="nofollow" id="cancel-comment-reply-link" href="{{ page.url | absolute_url }}#respond" style="display:none;">Cancel reply</a></small></h2>
