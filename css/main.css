@@ -283,3 +283,7 @@ a.sidebar-nav-item:focus {
 .comment-message {
   margin: 1em;
 }
+
+textarea:focus {
+    border: 3px solid #555;
+}
