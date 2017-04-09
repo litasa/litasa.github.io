@@ -6,6 +6,7 @@
   </h2>
   {% assign comments = site.data.comments[page.slug]%}
   {% for comment in comments %}
+  
     {% assign index       = forloop.index %}
     {% assign r           = comment[1].replying_to %}
     {% assign replying_to = r | to_integer %}

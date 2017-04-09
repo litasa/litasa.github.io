@@ -1,26 +1,22 @@
 <div id="respond">
         <h2 class="page__section-label">Leave a Comment</h2>
-        <form id="comment-form" class="page_form js-form form" method="post" action="https://api.staticman.net/v2/entry/litasa/litasa.github.io/master/comments">
+        <form id="comment-form" class="card form" method="post" action="https://api.staticman.net/v2/entry/litasa/litasa.github.io/master/comments">
 
-          <fieldset>
-            <label for="comment-form-name"><strong>Name</strong></label>
-            <input type="text" id="comment-form-name" name="fields[name]" required spellcheck="false">
+          <fieldset class="field" id="first-field">
+            <input type="text" id="comment-form-name" name="fields[name]" required spellcheck="false"
+            placeholder="Name" class="rounded comment-form">
           </fieldset>
 
-          <fieldset>
-            <label for="comment-form-email"><strong>Email</strong></label>
-            <input type="email" id="comment-form-email" name="fields[email]" required spellcheck="false">
+          <fieldset class="field">
+            <input type="email" id="comment-form-email" name="fields[email]" required spellcheck="false" placeholder="Email" class="rounded comment-form">
           </fieldset>
 
-          <fieldset>
-            <label for="comment-form-url"><strong>Website</strong> <small>(optional)</small></label>
-            <input type="url" id="comment-form-url" name="fields[url]"/>
+          <fieldset class="field">
+            <input type="url" id="comment-form-url" name="fields[url]" placeholder="Website (optional)" class="rounded comment-form"/>
           </fieldset>
 
-          <fieldset>
-            <label for="comment-form-message"><strong>Comment</strong>
-            <small>(<a href="https://kramdown.gettalong.org/quickref.html" target="_blank">Markdown</a> is allowed)</small></label>
-            <textarea type="text" rows="6" id="comment-form-message" name="fields[message]" required spellcheck="true"></textarea>
+          <fieldset class="field">
+            <textarea type="text" rows="6" id="comment-form-message" name="fields[message]" required spellcheck="true" placeholder="Message, Markdown is allowed" class="rounded comment-form"></textarea>
           </fieldset>
 
           <!-- Hidden values no person should fill in -->
@@ -32,13 +28,9 @@
             <label for="comment-form-location">Leave blank if you are a human</label>
             <input type="text" id="comment-form-location" name="fields[hidden]" autocomplete="off">
           </fieldset>
-          <!-- Start comment form alert messaging -->
-          <p class="hidden js-notice">
-            <span class="js-notice-text"></span>
-          </p>
-          <!-- End comment form alert messaging -->
-          <fieldset>
-            <button type="submit" id="comment-form-submit" class="btn btn--large">Submit Comment</button>
+
+          <fieldset class="field">
+            <button type="submit" id="comment-form-submit" class="btn-class">Submit Comment</button>
           </fieldset>
         </form>
       </div>
