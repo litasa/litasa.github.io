@@ -4,27 +4,24 @@
       {{ site.data.comments[page.slug] | size }}
     Comments
   </h2>
-  {% assign comments = site.data.comments[page.slug]%}
-  {% if comments.size > 0 %}
-    {% assign comments = comments | sort="date" %}
+  {% if site.data.comments[page.slug].size > 0 %}
+    {% assign comments = site.data.comments[page.slug] | sort %}
+      {% for comment in comments %}
+        {% assign index       = forloop.index %}
+        {% assign r           = comment[1].replying_to %}
+        {% assign replying_to = r | to_integer %}
+        {% assign avatar      = comment[1].avatar %}
+        {% assign email       = comment[1].email %}
+        {% assign name        = comment[1].name %}
+        {% assign url         = comment[1].url %}
+        {% assign date        = comment[1].date %}
+        {% assign message     = comment[1].message %}
+        <div class="a-comment card">
+          <div class="comment-user"> {{ name }}</div>
+          <time class="comment-date" datetime="{{ date | time_tag }}">{{ date | date: "%d %b, %Y" }}</time>
+          <hr class="comment-hr"/>
+          <div class="comment-message">{{ message | markdownify}}</div>
+        </div>
+      {% endfor %}
   {% endif %}
-    {% for comment in comments %}
-  
-  
-    {% assign index       = forloop.index %}
-    {% assign r           = comment[1].replying_to %}
-    {% assign replying_to = r | to_integer %}
-    {% assign avatar      = comment[1].avatar %}
-    {% assign email       = comment[1].email %}
-    {% assign name        = comment[1].name %}
-    {% assign url         = comment[1].url %}
-    {% assign date        = comment[1].date %}
-    {% assign message     = comment[1].message %}
-    <div class="a-comment card">
-      <div class="comment-user"> {{ name }}</div>
-      <time class="comment-date" datetime="{{ date | time_tag }}">{{ date | date: "%d %b, %Y" }}</time>
-      <hr class="comment-hr"/>
-      <div class="comment-message">{{ message | markdownify}}</div>
-    </div>
-  {% endfor %}
 </div>
