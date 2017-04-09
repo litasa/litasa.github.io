@@ -3,7 +3,7 @@ _parent: 'http://localhost:4000/blog/2016/04/30/Test-post'
 name: Jakob
 email: 6695979238cfe716f7bd115770b536dd
 url: ''
-message: "#H1\r\n\r\nTesting"
+message: "**bold**"
 replying_to: ''
 hidden: ''
 date: '2017-04-09T08:54:44.018Z'

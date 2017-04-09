@@ -20,7 +20,7 @@
       <div class="comment-user"> {{ name }}</div>
       <time class="comment-date" datetime="{{ date | time_tag }}">{{ date | date: "%d %b, %Y" }}</time>
       <hr class="comment-hr"/>
-      <div class="comment-message">{{ message }}</div>
+      <div class="comment-message">{{ message | markdownify}}</div>
     </div>
   {% endfor %}
 </div>
