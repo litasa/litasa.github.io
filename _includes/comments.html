@@ -5,7 +5,11 @@
     Comments
   </h2>
   {% assign comments = site.data.comments[page.slug]%}
-  {% for comment in comments reversed %}
+  {% if comments.size > 0 %}
+    {% assign comments = comments | sort="date" %}
+  {% endif %}
+    {% for comment in comments %}
+  
   
     {% assign index       = forloop.index %}
     {% assign r           = comment[1].replying_to %}
