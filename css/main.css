@@ -246,7 +246,7 @@ a.sidebar-nav-item:focus {
 
 .a-comment {
   position: relative;
-  background: ivory;
+  background: gainsboro;
   margin-top: 0.5em;
   padding-bottom: 0.5em;
 }
@@ -277,7 +277,13 @@ a.sidebar-nav-item:focus {
 }
 
 .comment-message {
-  margin: 1em;
+  margin: 0.5em;
+  background-color: #f2f2f2;
+  border-radius: 5px;
+}
+
+.comment-message p {
+  margin: 0.5em;
 }
 
 .field {
@@ -307,6 +313,7 @@ a.sidebar-nav-item:focus {
 .comment-form {
   width: 100%;
   color: #212121;
+  background-color: #f2f2f2;
 }
 
 #first-field {
