@@ -1,6 +1,6 @@
 <div id="blog_posts">
 {% for post in paginator.posts %}
-	<article class='module color'>
+	<article class='module main-color'>
 		<header>
       {% if post.tags != empty%}
       <div id="tag-list" class="category">
@@ -13,7 +13,7 @@
       {% endif %}
 			<span class='date'>{{ post.date | date_to_string }}</span>
 			<h2>
-				<a href='{{ fullUrl }}{{ post.url }}' title='{{ post.title }}'>
+				<a id="post-header" href='{{ fullUrl }}{{ post.url }}' title='{{ post.title }}'>
 					{{ post.title }}
 				</a>
 			</h2>

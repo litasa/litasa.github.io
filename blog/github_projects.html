@@ -7,7 +7,7 @@ sidebar: page
 <div id="projects" class="unit-whole">
         {% for project in site.data.projects %}
         <div class="grid" style="padding-top: 50px">
-            <div class="card unit-whole">
+            <div class="card main-color unit-whole">
                 <div class="card-content">
                     <h3> {{project.name}} </h3>
                     <p> {{project.description | strip_html | truncate: 150 }} </p>
