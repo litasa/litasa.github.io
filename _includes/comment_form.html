@@ -1,22 +1,22 @@
 <div id="respond">
         <h2 class="page__section-label">Leave a Comment</h2>
-        <form id="comment-form" class="card form" method="post" action="https://api.staticman.net/v2/entry/litasa/litasa.github.io/master/comments">
+        <form id="contactForm" class="card form" method="post" action="https://api.staticman.net/v2/entry/litasa/litasa.github.io/master/comments">
 
           <fieldset class="field" id="first-field">
-            <input type="text" id="comment-form-name" name="fields[name]" required spellcheck="false"
+            <input type="text" name="fields[name]" required spellcheck="false"
             placeholder="Name" class="rounded comment-form">
           </fieldset>
 
           <fieldset class="field">
-            <input type="email" id="comment-form-email" name="fields[email]" required spellcheck="false" placeholder="Email" class="rounded comment-form">
+            <input type="email" name="fields[email]" required spellcheck="false" placeholder="Email" class="rounded comment-form">
           </fieldset>
 
           <fieldset class="field">
-            <input type="url" id="comment-form-url" name="fields[url]" placeholder="Website (optional)" class="rounded comment-form"/>
+            <input type="url" name="fields[url]" placeholder="Website (optional)" class="rounded comment-form"/>
           </fieldset>
 
           <fieldset class="field">
-            <textarea type="text" rows="6" id="comment-form-message" name="fields[message]" required spellcheck="true" placeholder="Message, Markdown is allowed" class="rounded comment-form"></textarea>
+            <textarea type="text" rows="6" name="fields[message]" required spellcheck="true" placeholder="Message, Markdown is allowed" class="rounded comment-form"></textarea>
           </fieldset>
 
           <!-- Hidden values no person should fill in -->
