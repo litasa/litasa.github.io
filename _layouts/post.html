@@ -21,10 +21,9 @@ title: My Blog
             {{ content }}
             
             <p class="return_top"><small><a href="#top">[top]</a></small></p>
-
+          {% if page.comments == true %}
             {% include comments.html %}
             {% include comment_form.html %}
-
-            <!-- Start new comment form -->
+          {% endif %}
         </article>
 </div>

@@ -10,12 +10,13 @@ sidebar: page
             <div class="card main-color unit-whole">
                 <div class="card-content">
                     <h3> {{project.name}} </h3>
-                    <p> {{project.description | strip_html | truncate: 150 }} </p>
-                    <p> {{ project.link }}
-                </div>
-                <div class="card-action">
-                    <a href="{{ project.link }}" class="button"></a>
-                    <a href="{{ project.github }}" class="button"></a>
+                    <p> {{project.description}} </p>
+                    <hr class="comment-hr"/>
+                   <a class="btn-class btn-github" href="{{ project.link }}" target="_blank">
+                       <span class="fa fa-github">
+                       </span>
+                       View on Github >>
+                   </a>
                 </div>
             </div>
         </div>

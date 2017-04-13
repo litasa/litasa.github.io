@@ -1,15 +1,15 @@
-- name: project 1
-  description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam"
+- name: Memory Trace
+  description: "My Master's Thesis done at Autodesk. It is a framework for collecting and visualizing memory usage for custom made allocators."
   link: "https://github.com/litasa/Memory-Trace"
 
-- name: project 2
-  link: "#"
-  description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam"
+- name: Level of Detail on Terrain
+  link: "https://github.com/litasa/Level-of-Detail-Terrain"
+  description: "All geometry resides on the GPU at all times, no vertices or other model data (except the height map at the moment) are manupulated on the CPU. It uses tessellation and instanced rendering to enable level of detail."
   
-- name: project 3
-  link: "#"
-  description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam"
+- name: ClothPhysics
+  link: "https://github.com/litasa/ClothPhysics"
+  description: "Modeled using a spring mass system. Using transform feedback in order to perform the simulation on the gpu"
   
-- name: project 5
-  link: "#"
-  description: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam"
+- name: Ray Tracer
+  link: "https://github.com/litasa/Monte-Carlo-Raytracer"
+  description: "A raytracer using monte carlo integration. Have support for Oren-Nayar Diffuse"
