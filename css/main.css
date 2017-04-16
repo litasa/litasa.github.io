@@ -224,6 +224,7 @@ a.sidebar-nav-item:focus {
   #to_bottom {
   position: absolute;
   bottom: 1em;
+  display: block;
 }
 }
 
