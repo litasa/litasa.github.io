@@ -178,13 +178,6 @@ a.sidebar-nav-item:focus {
   }
 }
 
-@media (min-width: 64em) {
-  .content {
-    margin-left: 12rem;
-    max-width: 52rem;
-  }
-}
-
 .pagination {
   float: right;
 }
@@ -225,7 +218,7 @@ a.sidebar-nav-item:focus {
   position: absolute;
   bottom: 1em;
   display: block;
-}
+  }
 }
 
 .a-comment {
