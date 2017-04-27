@@ -1,5 +1,10 @@
 name: Jakob Törmä Ruhl
 markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  hard_wrap: false
+
 permalink: /blog/:year/:month/:day/:title
 
 twitter_username:     lerusius
