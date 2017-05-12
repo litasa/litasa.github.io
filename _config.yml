@@ -20,6 +20,8 @@ paginate_path: "/page:num/"
 sort_tag: '/blog/sort_tag'
 sort_date: '/blog/sort_date'
 
+images: '{{site.baseurl}}/images/'
+
 reCaptcha: 
   siteKey: '6LcqJhwUAAAAAIXLYRibDgFsVhI4c_B9f5c7-_wg'
 
