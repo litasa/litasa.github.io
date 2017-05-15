@@ -19,8 +19,10 @@
 			{% include contact.html %}
 			</div>
 		</div>
-		<script src='https://www.google.com/recaptcha/api.js'></script>
 		<script src="{{ " /js/jquery-3.2.1.min.js" | prepend: site.baseurl }}"></script>		
 		<script src="{{ "/js/main.js" | prepend: site.baseurl }}"></script>
+		{% if jekyll.environment == 'production' %}
+    	{% include analytics.html %}
+    	{% endif %}
 	</body>
 </html>
