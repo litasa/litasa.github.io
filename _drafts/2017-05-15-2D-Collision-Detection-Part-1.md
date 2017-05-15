@@ -104,4 +104,8 @@ bool Intersect_Circle_Circle(vec2 c0, float r0, vec2 c1, float r1, vec2 &dir, fl
         </div>
     </div>
 </div>
-This function is similiar to the first algorithm, but here we also collect the direction(`dir`) and distance(`dist`) needed in order to move `circle 1` to not touch `circle 0` anymore.
+This function is similiar to the first algorithm, but here we also collect the direction(`dir`) and distance(`dist`) needed to move `circle 1` out of `circle 0`.
+
+<hr>
+
+So there we have it, Circle and Circle intersection. In the next tutorial we will take a look at rectangle and rectangle intersection!

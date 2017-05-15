@@ -5,7 +5,6 @@ tags: []
 comments: false
 ---
 
-# Introduction
 So I recently came across the problem of determine if a line segment intersects an Axis Aligned Bounding Box(aabb), and while I have done this a few times I was a bit unsure about the solution. So I did what every self-relient programmer would do. I googled it... And found nothing 
 
 So I decided to write a series of small tutorials on collision detection in 2D. My hope is to have code that can be copy pasted into any project, while also providing more information on how it works with detailed pictures and text. The code will be written in C++, but should easily be translated into whatever language needed

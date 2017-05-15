@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "2D Collision Detection Part 2 - Ray Ray Intersection"
+title: "2D Collision Detection Part 2 - Rectangle Rectangle Intersection"
 tags: []
 comments: false
 ---
