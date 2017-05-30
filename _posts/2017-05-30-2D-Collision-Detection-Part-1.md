@@ -4,15 +4,17 @@ title: "2D Collision Detection Part 1 - Circle Circle Intersection"
 tags: [circle, collision detection]
 comments: false
 ---
-* TOC
-{:toc}
+One of the easiests test, while at the same time being very useful, is collision detection between two circles.
 
 # Circle and Problem definition
+
 The problem is as follows:
 
 1) We have two circles `circle 0` and `circle 1`, each defined with a centerpoint `c` and a radius `r`. We want to determine if any part of `circle 1` is touching `circle 0`.
 
 2) In order to resolve a hit we will need to find how much `circle 1` is intersecting `circle 0` and the normal at point of contact.
+
+[TOC]
 
 # Determine Hit
 
