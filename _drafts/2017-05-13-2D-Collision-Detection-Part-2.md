@@ -1,35 +1,52 @@
 ---
 layout: post
-title: "2D Collision Detection Part 2 - Rectangle Rectangle Intersection"
+title: "2D Collision Detection Part 2 - Box Box Intersection"
 tags: []
 comments: false
 ---
+Intersecting two Boxes is also a common test to do, for example checking if the heroes sword swing hits the big bad skeleton.
 
-* TOC
-{:toc}
-
-# Ray and Problem definition
 The problem is as follows:
 
-1) We have two circles `circle 0` and `circle 1`, each defined with a centerpoint `c` and a radius `r`. We want to determine if any part of `circle 1` is touching `circle 0`.
+1) We have two boxes `box 0` and `box 1`, each defined as a point `top_left` located in the top left corner, a width `width` and a height `height`. We want to determine if any part of `box 1` is touching `box 0`.
 
-2) In order to resolve a hit we will need to find how much `circle 1` is intersecting `circle 0` and the normal at point of contact.
+2) In order to resolve a hit we need to find out how much `box 1` is intersection `box 0`.
+
+2 a) To have `box 1` slide against `box 0` we also need to know the direction `box 1` is traveling in.
+
+3) Both of the boxes are axis aligned and cannot rotate.
 
 # Determine Hit
 
 ```cpp
-bool Intersect_Ray_Ray(vec2 c0, float r0, vec2 c1, float r1)
+bool Intersect_Box_Box(vec2 top_left0, float width0, float height0, vec2 top_left1, float width1, float height0)
 {
-    //create a vector from the centeres
-    vec2 x = c1 - c0;
-    //if length of vector x is shorter then the sum of the radii we have a collision
-    return (length(x) < r0 + r1? true ; false)
+    if(top_left1.x + width1 < top_left0)
+    {
+        //box1 is to the left of box0
+        return false;
+    }
+    if(top_left0.x + width0 < top_left1)
+    {
+        //box1 is to the right of box0
+        return false;
+    }
+    if(top_left1.y + height1 < top_left0.y)
+    {
+        //box1 is above box0
+        return false;
+    }
+    if(top_left0.y + height0 < top_left1.y)
+    {
+        //box1 is below box0
+        return false;
+    }
+    //box1 is not above, below, left or right of box0. Must be inside
+    return true;
 }
 ```
 
-The comments explain the solution but let us concider a few different cases, to make sure it works.
-
-#### Case 1: No collision
+#### Case 1: Box 1 is to the right of Box 0
 <div class="grid">
     <div class="unit one-third"></div>
     <div class="unit one-third image">
@@ -39,3 +56,43 @@ The comments explain the solution but let us concider a few different cases, to 
     </div>
 </div>
 
+
+#### Case 2: Box 1 is to the left of Box 0
+
+
+#### Case 3: Box 1 is above Box 0
+
+#### Case 4: Box 1 is below Box 0
+
+#### Extreme Case: Box 1 is inside Box 0
+
+# Hit Resolution
+
+```cpp
+bool Intersect_Box_Box(vec2 top_left0, float width0, float height0, vec2 top_left1, float width1, float height0)
+{
+    if(top_left1.x + width1 < top_left0.x)
+    {
+        //box1 is to the left of box0
+        return false;
+    }
+    if(top_left0.x + width0 < top_left1.x)
+    {
+        //box1 is to the right of box0
+        return false;
+    }
+    if(top_left1.y + height1 < top_left0.y)
+    {
+        //box1 is above box0
+        return false;
+    }
+    if(top_left0.y + height0 < top_left1.y)
+    {
+        //box1 is below box0
+        return false;
+    }
+    //box1 is not above, below, left or right of box0. Must be inside or touching box0
+
+    return true;
+}
+```
