@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "2D Collision Detection Part 1 - Circle Circle Intersection"
-tags: []
+tags: [circle, collision detection]
 comments: false
 ---
 * TOC
