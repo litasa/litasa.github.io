@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "2D Collision Detection Part 0 - Introduction"
-tags: []
+tags: [collision, tutorial]
 comments: false
 ---
 
@@ -23,4 +23,4 @@ I will use [glm](http://glm.g-truc.net/0.9.8/index.html) as my math library. The
 
 I hope someone will find these tutorials helpful. 
 
-In the first tutorial we will take a look at circle and circle intersection.
+In the first tutorial we will take a look at [circle and circle intersection]({{ site.baseurl }}{% post_url 2017-05-15-2D-Collision-Detection-Part-1 %}).
