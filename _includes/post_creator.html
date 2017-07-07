@@ -12,11 +12,11 @@
       </div>
       {% endif %}
 			<span class='date'>{{ post.date | date_to_string }}</span>
-			<h2>
+<center><h2>
 				<a id="post-header" href='{{ fullUrl }}{{ post.url }}' title='{{ post.title }}'>
 					{{ post.title }}
 				</a>
-			</h2>
+			</h2></center>
 		</header>
 	<p>{{ post.excerpt | strip_html | truncate: 250 }}</p>
 	</article>
