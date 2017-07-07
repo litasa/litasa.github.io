@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Interesting talk from Nordic Game 2017"
-tags: []
+tags: [Nordic Game, Talk]
 comments: true
 ---
 
