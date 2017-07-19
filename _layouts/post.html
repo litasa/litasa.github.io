@@ -17,9 +17,9 @@ title: My Blog
         
             <h1 class="page_title">{{ page.title }}</h1>
             <div class='separator'></div>
-            
+            <div class="markdown-content">
             {{ content | markdownify}}
-            
+            </div>
             <p class="return_top"><small><a href="#top">[top]</a></small></p>
           {% if page.comments == true %}
             {% include comments.html %}
