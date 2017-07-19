@@ -7,6 +7,9 @@ kramdown:
 
 permalink: /blog/:year/:month/:day/:title
 
+#site information
+title: Litasa's Blog
+
 twitter_username:     lerusius
 github_username:      litasa
 linkedin_username:    jakob-torma-ruhl
