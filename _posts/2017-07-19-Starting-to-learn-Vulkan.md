@@ -28,6 +28,6 @@ I recommend starting with the [Triangle](https://github.com/SaschaWillems/Vulkan
 ## Intermediate
 The book I have to mention is [Vulkan Programming Guide: The Official Guide to Learning Vulkan](https://www.amazon.com/Vulkan-Programming-Guide-Official-Learning/dp/0134464540). It follows in the veins of [OpenGL Superbible: Comprehensive Tutorial and Reference](https://www.amazon.com/OpenGL-Superbible-Comprehensive-Tutorial-Reference/dp/0672337479). but does miss the mark on the Learning bit. Basically it is a glorified manual for the Vulkan API with not enough examples. Where it shines is when used together with the above mentioned websites. Say you have just read the code example about [Push Constants](https://github.com/SaschaWillems/Vulkan#push-constants) and want to learn more about them, then this book is what you want. It also does a great job on explaining the architecture of Vulkan, how it all fits together.
 
-</hr>
+<hr>
 
 I hope to expand this selection of helpful sites for learning Vulkan as I keep learning myself.
