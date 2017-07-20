@@ -54,7 +54,7 @@ typedef  struct {
 
 The descriptions does not really say anything until we have a real example. 
 
-```c++
+```cpp
 //// Based on: https://github.com/fsole/GLSamples/blob/master/src/MultidrawIndirect.cpp
 //// Modified by: Jakob Törmä Ruhl
 

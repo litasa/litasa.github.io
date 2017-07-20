@@ -1,9 +1,11 @@
 name: Jakob Törmä Ruhl
 markdown: kramdown
-highlighter: rouge
+#highlighter: rouge
 kramdown:
   input: GFM
   hard_wrap: false
+  syntax_highlighter_opts:
+    disable: true
 
 permalink: /blog/:year/:month/:day/:title
 
