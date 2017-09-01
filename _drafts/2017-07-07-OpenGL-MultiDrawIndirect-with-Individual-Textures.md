@@ -46,438 +46,255 @@ typedef  struct {
         unsigned int  baseInstance;
 } DrawElementsIndirectCommand;
 ```
-* `count` referes to the number of vertices in the object
+* `count` refers to the number of used vertices
 * `instanceCount` is the number of instances to draw of the current object
 * `firstIndex` is the location of the first vertex relative the current object
 * `baseVertex` (ONLY DrawElementsIndirectCommand) location of current objects first vertex relative buffer
 * `baseInstance` is the current instance for the indirect draw
 
-The descriptions does not really say anything until we have a real example. 
-
-```cpp
-//// Based on: https://github.com/fsole/GLSamples/blob/master/src/MultidrawIndirect.cpp
-//// Modified by: Jakob Törmä Ruhl
-
-#include <GL\glew.h>
-#include <GLFW/glfw3.h>
-
-#include <iostream>
-
-void processInput(GLFWwindow *window);
-void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
-
-// settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
-//
-namespace
+What glMultiDrawElementsIndirect does is the following (assuming no errors generated):
+```c++
+GLsizei n;
+for (n = 0; n < drawcount; n++)
 {
-	struct Vertex2D
-	{
-		float x, y;  //Position
-		float u, v;  //Uv
-	};
+        const DrawElementsIndirectCommand *cmd;
+        if (stride != 0) {
+                cmd = (const DrawElementsIndirectCommand  *)((uintptr)indirect + n * stride);
+        } else {
+                cmd = (const DrawElementsIndirectCommand  *)indirect + n;
+        }
 
-	struct DrawElementsCommand
-	{
-		GLuint vertexCount;
-		GLuint instanceCount;
-		GLuint firstIndex;
-		GLuint baseVertex;
-		GLuint baseInstance;
-	};
-
-	struct Matrix
-	{
-		float a0, a1, a2, a3;
-		float b0, b1, b2, b3;
-		float c0, c1, c2, c3;
-		float d0, d1, d2, d3;
-	};
-
-	void setMatrix(Matrix&matrix, float x, float y)
-	{
-		/*
-		1 0 0 0
-		0 1 0 0
-		0 0 1 0
-		x y 0 1
-		*/
-		matrix.a0 = 1;
-		matrix.a1 = matrix.a2 = matrix.a3 = 0;
-
-		matrix.b1 = 1;
-		matrix.b0 = matrix.b2 = matrix.b3 = 0;
-		
-		matrix.c2 = 1;
-		matrix.c0 = matrix.c1 = matrix.c3 = 0;
-
-		matrix.d0 = x;
-		matrix.d1 = y;
-		matrix.d2 = 0;
-		matrix.d3 = 1;
-	}
-
-	struct SDrawElementsCommand
-	{
-		GLuint vertexCount;
-		GLuint instanceCount;
-		GLuint firstIndex;
-		GLuint baseVertex;
-		GLuint baseInstance;
-	};
-
-	const Vertex2D gQuad[] = {
-		//xy			//uv
-		{ 0.0f,0.0f,	0.0f,0.0f },
-		{ 0.1f,0.0f,	1.0f,0.0f },
-		{ 0.0f,0.1f,	0.0f,1.0f },
-		{ 0.1f,0.1f,	1.0f,1.0f }
-	};
-
-	const Vertex2D gTriangle[] =
-	{
-		{ 0.0f,0.0f,	0.0f,0.0f},
-		{ 0.05f,0.1f,	0.5f,1.0f},
-		{ 0.1f,0.0f,	1.0f,0.0f}
-	};
-
-	const unsigned int gQuadIndex[] = {
-		0,1,2,
-		1,3,2 };
-	const unsigned int gTriangleIndex[] =
-	{
-		0,1,2
-	};
-
-	const GLchar* gVertexShaderSource[] =
-	{
-		"#version 430 core\n"
-		"layout (location = 0 ) in vec2 position;\n"
-		"layout (location = 1 ) in vec2 texCoord;\n"
-		"layout (location = 3 ) in mat4 instanceMatrix;\n"
-		"layout (location = 2 ) in uint drawid;\n"
-		"out vec2 uv;\n"
-		"out vec4 pos;\n"
-		"flat out uint drawID;\n"
-		"void main(void)\n"
-		"{\n"
-		"  gl_Position = instanceMatrix * vec4(position,0.0,1.0);\n"
-		"  uv = texCoord;\n"
-		"  pos = instanceMatrix * vec4(position,0.0,1.0);\n"
-		"  drawID = drawid;\n"
-		"}\n"
-	};
-
-	const GLchar* gFragmentShaderSource[] =
-	{
-		"#version 430 core\n"
-		"out vec4 color;\n"
-		"in vec2 uv;\n"
-		"in vec4 pos;\n"
-		"flat in uint drawID;\n"
-		"uniform vec2 light_pos;\n"
-		"layout (binding=0) uniform sampler2DArray textureArray;\n"
-		"void main(void)\n"
-		"{\n"
-		"  float intensity = 1.0 / length(pos.xy - light_pos);\n"
-		"  color = intensity * texture(textureArray, vec3(uv.x,uv.y,drawID) );\n"
-		"}\n"
-	};
-
-	GLuint gVAO(0);
-	GLuint gArrayTexture(0);
-	GLuint gVertexBuffer(0);
-	GLuint gElementBuffer(0);
-	GLuint gIndirectBuffer(0);
-	GLuint gMatrixBuffer(0);
-	GLuint gProgram(0);
-
-	float gMouseX(0);
-	float gMouseY(0);
-
-}//Unnamed namespace
-
-void GenerateGeometry()
-{
-	//Generate 50 quads and 50 triangles
-	const unsigned num_vertices = 4 * 50 + 3 * 50;
-	Vertex2D vVertex[num_vertices];
-	Matrix vMatrix[100];
-	unsigned vertexIndex(0);
-	unsigned matrixIndex(0);
-	float xOffset(-0.95f);
-	float yOffset(-0.95f);
-	// populate geometry
-	for (unsigned int i(0); i != 10; ++i)
-	{
-		for (unsigned int j(0); j != 10; ++j)
-		{
-			//quad
-			if (j % 2 == 0)
-			{
-				for (unsigned int k(0); k != 4; ++k)
-				{
-					vVertex[vertexIndex++] = gQuad[k];
-				}
-			}
-			//triangle
-			else
-			{
-				for (unsigned int k(0); k != 3; ++k)
-				{
-					vVertex[vertexIndex++] = gTriangle[k];
-				}
-			}
-			//set position in model matrix
-			setMatrix(vMatrix[matrixIndex++], xOffset, yOffset);
-			xOffset += 0.2f;
-		}
-		yOffset += 0.2f;
-		xOffset = -0.95f;
-	}
-
-	glGenVertexArrays(1, &gVAO);
-	glBindVertexArray(gVAO);
-
-	//Create a vertex buffer object
-	glGenBuffers(1, &gVertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, gVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vVertex), vVertex, GL_STATIC_DRAW);
-
-	//Specify vertex attributes for the shader
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (GLvoid*)(offsetof(Vertex2D,x)));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (GLvoid*)(offsetof(Vertex2D,u)));
-
-	//Create an element buffer and populate it
-	glGenBuffers(1, &gElementBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gElementBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(gTriangleIndex) + sizeof(gQuadIndex), NULL, GL_STATIC_DRAW);
-
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(gQuadIndex), &gQuadIndex);
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, sizeof(gQuadIndex), sizeof(gTriangleIndex), &gTriangleIndex);
-
-	//Generate draw commands
-	SDrawElementsCommand vDrawCommand[100];
-	GLuint baseVert = 0;
-	for (unsigned int i(0); i<100; ++i)
-	{
-		//quads
-		if (i % 2 == 0)
-		{
-			vDrawCommand[i].vertexCount = 6;		//2 triangles = 6 vertices
-			vDrawCommand[i].instanceCount = 1;		//Draw 1 instance
-			vDrawCommand[i].firstIndex = 0;			//Draw from index 0 for this instance
-			vDrawCommand[i].baseVertex = baseVert;	//Starting from baseVert
-			vDrawCommand[i].baseInstance = i;		//gl_InstanceID. 
-			baseVert += 4;
-		}
-		//triangles
-		else
-		{
-			vDrawCommand[i].vertexCount = 3;		//1 triangle = 3 vertices
-			vDrawCommand[i].instanceCount = 1;		//Draw 1 instance
-			vDrawCommand[i].firstIndex = 0;			//Draw from index 0 for this instance
-			vDrawCommand[i].baseVertex = baseVert;	//Starting from baseVert
-			vDrawCommand[i].baseInstance = i;		//gl_InstanceID
-			baseVert += 3;
-		}
-	}
-
-	//feed the draw command data to the gpu
-	glGenBuffers(1, &gIndirectBuffer);
-	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, gIndirectBuffer);
-	glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(vDrawCommand), vDrawCommand, GL_STATIC_DRAW);
-
-	//feed the instance id to the shader
-	glBindBuffer(GL_ARRAY_BUFFER, gIndirectBuffer);
-	glEnableVertexAttribArray(2);
-	glVertexAttribIPointer(2, 1, GL_UNSIGNED_INT, sizeof(SDrawElementsCommand), (void*)(offsetof(DrawElementsCommand, baseInstance)));
-	glVertexAttribDivisor(2, 1); //only once per instance
-
-	//Setup per instance matrices
-	//Method 1. Use Vertex attributes and the vertex attrib divisor
-	glGenBuffers(1, &gMatrixBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, gMatrixBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vMatrix), vMatrix, GL_STATIC_DRAW);
-	//A matrix is 4 vec4s
-	glEnableVertexAttribArray(3 + 0);
-	glEnableVertexAttribArray(3 + 1);
-	glEnableVertexAttribArray(3 + 2);
-	glEnableVertexAttribArray(3 + 3);
-
-	glVertexAttribPointer(3 + 0, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (GLvoid*)(offsetof(Matrix, a0)));
-	glVertexAttribPointer(3 + 1, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (GLvoid*)(offsetof(Matrix, b0)));
-	glVertexAttribPointer(3 + 2, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (GLvoid*)(offsetof(Matrix, c0)));
-	glVertexAttribPointer(3 + 3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (GLvoid*)(offsetof(Matrix, d0)));
-	//Only apply one per instance
-	glVertexAttribDivisor(3 + 0, 1);
-	glVertexAttribDivisor(3 + 1, 1);
-	glVertexAttribDivisor(3 + 2, 1);
-	glVertexAttribDivisor(3 + 3, 1);
-
-	//Method 2. Use Uniform Buffers. Not shown here
-}
-
-void GenerateArrayTexture()
-{
-	//Generate an array texture
-	glGenTextures(1, &gArrayTexture);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D_ARRAY, gArrayTexture);
-
-	//Create storage for the texture. (100 layers of 1x1 texels)
-	glTexStorage3D(GL_TEXTURE_2D_ARRAY,
-		1,                    //No mipmaps as textures are 1x1
-		GL_RGB8,              //Internal format
-		1, 1,                 //width,height
-		100                   //Number of layers
-	);
-
-	for (unsigned int i(0); i != 100; ++i)
-	{
-		//Choose a random color for the i-essim image
-		GLubyte color[3] = { GLubyte(rand() % 255),GLubyte(rand() % 255),GLubyte(rand() % 255) };
-
-		//Specify i-essim image
-		glTexSubImage3D(GL_TEXTURE_2D_ARRAY,
-			0,                     //Mipmap number
-			0, 0, i,               //xoffset, yoffset, zoffset
-			1, 1, 1,               //width, height, depth
-			GL_RGB,                //format
-			GL_UNSIGNED_BYTE,      //type
-			color);                //pointer to data
-	}
-
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-}
-
-GLuint CompileShaders(const GLchar** vertexShaderSource, const GLchar** fragmentShaderSource)
-{
-	//Compile vertex shader
-	GLuint vertexShader(glCreateShader(GL_VERTEX_SHADER));
-	glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-
-	//Compile fragment shader
-	GLuint fragmentShader(glCreateShader(GL_FRAGMENT_SHADER));
-	glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-	//Link vertex and fragment shader together
-	GLuint program(glCreateProgram());
-	glAttachShader(program, vertexShader);
-	glAttachShader(program, fragmentShader);
-	glLinkProgram(program);
-
-	//Delete shaders objects
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
-	return program;
-}
-
-int main()
-{
-
-	// glfw: initialize and configure
-	// ------------------------------
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	// glfw window creation
-	// --------------------
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-	if (window == NULL)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(window);
-	glfwSetCursorPosCallback(window, cursor_position_callback);
-
-	glewInit();
-
-	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
-
-	//Set clear color
-	glClearColor(1.0, 1.0, 1.0, 0.0);
-
-	//Create and bind the shader program
-	gProgram = CompileShaders(gVertexShaderSource, gFragmentShaderSource);
-	glUseProgram(gProgram);
-
-	glUniform1i(0, 0); //Sampler refers to texture unit 0
-
-	GenerateGeometry();
-	GenerateArrayTexture();
-
-
-	// render loop
-	while (!glfwWindowShouldClose(window))
-	{
-		// input
-		processInput(window);
-
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		// Use program. Not needed in this example since we only have one that
-		// we already use
-		//glUseProgram(gProgram);
-
-		//populate uniform
-		glUniform2f(glGetUniformLocation(gProgram, "light_pos"), gMouseX, gMouseY);
-		
-		// Bind the vertex array we want to draw from. Not needed in this example
-		// since we only have one that is already bounded
-		//glBindVertexArray(gVAO);
-
-		//draw
-		glMultiDrawElementsIndirect(GL_TRIANGLES, //type
-			GL_UNSIGNED_INT, //indices represented as unsigned ints
-			(GLvoid*)0, //start with the first draw command
-			100, //draw 100 objects
-			0); //no stride, the draw commands are tightly packed
-
-
-
-		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-
-	 // glfw: terminate, clearing all previously allocated GLFW resources.
-	glfwTerminate();
-	//Clean-up
-	glDeleteProgram(gProgram);
-	glDeleteVertexArrays(1, &gVAO);
-	glDeleteBuffers(1, &gVertexBuffer);
-	glDeleteBuffers(1, &gElementBuffer);
-	glDeleteBuffers(1, &gMatrixBuffer);
-	glDeleteBuffers(1, &gIndirectBuffer);
-	glDeleteTextures(1, &gArrayTexture);
-	return 0;
-}
-
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
-{
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-}
-
-void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	gMouseX = -0.5f + float(xpos) / float(SCR_WIDTH);
-	gMouseY = 0.5f - float(ypos) / float(SCR_HEIGHT);
+        glDrawElementsInstancedBaseVertexBaseInstance(
+                mode,
+                cmd->count,
+                type,
+                cmd->firstIndex * size-of-type,
+                cmd->instanceCount,
+                cmd->baseVertex,
+                cmd->baseInstance);
 }
 ```
+* `mode` is what primitive to draw. Taken directly from the MultiDraw command
+* `type` specifies the type of indices. Also taken directly from the MultiDraw command
+
+glMultiDrawArraysIndirect behaves similarly.
+
+The descriptions does not really help your understanding on how to use the glMultiDrawIndirect commands, so let's take a look at one example.
+
+In this example I will be using glMultiDrawElementsIndirect since it models the real world application a little better, but should be trivial to change to Array drawing if that is your thing.
+
+## The Example
+In this example we will generate 50 commands to draw rectangles and 50 commands for triangles. Each object with its own transformation matrix. We will also give each object single pixel texture to have some colors to show.
+
+The rectangle is composed of 4 triangles (to make it a little more interesting) as shown below together with the layout of the triangle.
+
+![rectangle]({{site.url}}/images/OpenGL-MultiDrawIndirect/rectangle.jpeg) ![triangle]({{site.url}}/images/OpenGL-MultiDrawIndirect/triangle.jpeg)
+
+The picture below is what we are going to end up with. Nothing too exiting, but it will show how to handle different objects with different amount of vertices and indices each with an individual texture.
+![image]({{site.url}}/images/OpenGL-MultiDrawIndirect/result.PNG)
+
+## The Code
+The full code can be found [here](https://github.com/litasa/Advanced-OpenGL-Examples/blob/master/src/MultidrawIndirect/MultidrawIndirect.cpp).
+Let us just jump right in looking at the code, starting where the action happens; the render loop.
+
+```cpp
+ glUseProgram(gProgram);
+
+ glBindVertexArray(gVAO);
+
+ generateDrawCommands();
+
+ //draw
+ glMultiDrawElementsIndirect(GL_TRIANGLES, //type
+        GL_UNSIGNED_INT,                   //indices represented as unsigned ints
+        (GLvoid*)0,                        //start with the first draw command
+        100,                               //draw 100 objects
+        0);                                //no stride, the draw commands are tightly packed
+```
+As we can see we need to use the shader program and bind the vertex array where the data is located. We then generate the draw commands, more on that shortly. One thing to note is that the draw commands can be generated on another thread, this is where the hidden power of MultiDrawIndirect comes from. But for demonstration purposes we are just going to create the draw commands right before we use them, on the same thread.
+
+```cpp
+void generateDrawCommands()
+{
+    //Generate draw commands
+    SDrawElementsCommand vDrawCommand[100];
+    GLuint baseVert = 0;
+    for (unsigned i = 0; i<100; ++i)
+    {
+        //quad
+        if (i % 2 == 0)
+        {
+            vDrawCommand[i].vertexCount = 12;      //4 triangles = 12 vertices
+            vDrawCommand[i].instanceCount = 1      //Draw 1 instance
+            vDrawCommand[i].firstIndex = 0;        //Draw from index 0 for this instance
+            vDrawCommand[i].baseVertex = baseVert; //Starting from baseVert
+            vDrawCommand[i].baseInstance = i;      //gl_InstanceID
+            baseVert += gQuad.size();
+        }
+        //triangle
+        else
+        {
+            vDrawCommand[i].vertexCount = 3;       //1 triangle = 3 vertices
+            vDrawCommand[i].instanceCount = 1;     //Draw 1 instance
+            vDrawCommand[i].firstIndex = 0;        //Draw from index 0 for this instance
+            vDrawCommand[i].baseVertex = baseVert; //Starting from baseVert
+            vDrawCommand[i].baseInstance = i;      //gl_InstanceID
+            baseVert += gTriangle.size();
+        }
+    }
+
+    //feed the draw command data to the gpu via the gIndirectBuffer
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, gIndirectBuffer);
+    glBufferData(GL_DRAW_INDIRECT_BUFFER, sizeof(vDrawCommand), vDrawCommand, GL_DYNAMIC_DRAW);
+
+    //feed the instance id to the shader.
+    glBindBuffer(GL_ARRAY_BUFFER, gIndirectBuffer);
+    glEnableVertexAttribArray(2);
+    glVertexAttribIPointer(
+            2,
+            1,
+            GL_UNSIGNED_INT,
+            sizeof(SDrawElementsCommand),
+            (void*)(offsetof(DrawElementsCommand, baseInstance)));
+    glVertexAttribDivisor(2, 1); //only once per instance
+}
+```
+In this particular example we are generating individual draw calls for each object, matching the layout of the objects uploaded to the GPU. The draw commands is put into a `GL_DRAW_INDIRECT_BUFFER`. We are also adding the instance id to vertex attribute 2, in order to find the correct texture for each object inside the fragment shader. 
+
+Notice `glVertexAttribDivisor(2,1)` which tells the gpu to use the same baseInstance number until the next object, in essence recreating the `gl_InstanceID`. This is needed since `gl_InstanceID` starts at 0 for each new object. Remember that `glMultiDrawElementsIndirect` calls `glDrawElementsInstancedBaseVertexBaseInstance` once for each draw command. Since we are only drawing 1 instance of each object `gl_InstanceID` will always be `0` in this application (and in the general case, making it as good as useless).
+ To work around this limitation we manually upload the instanceId to the shaders. 
+
+```c++
+void GenerateGeometry()
+{
+    //---
+    // Generating and binding vertex buffer data
+    // In this example also created matrix data (vMatrix) here
+    //--
+    //Setup per instance matrices using Vertex attributes and the vertex attrib divisor
+    glGenBuffers(1, &gMatrixBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, gMatrixBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vMatrix), vMatrix, GL_STATIC_DRAW);
+    //A matrix is 4 vec4s
+    glEnableVertexAttribArray(3 + 0);
+    glEnableVertexAttribArray(3 + 1);
+    glEnableVertexAttribArray(3 + 2);
+    glEnableVertexAttribArray(3 + 3);
+
+    glVertexAttribPointer(3 + 0, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (GLvoid*)(offsetof(Matrix, a0)));
+    glVertexAttribPointer(3 + 1, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (GLvoid*)(offsetof(Matrix, b0)));
+    glVertexAttribPointer(3 + 2, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (GLvoid*)(offsetof(Matrix, c0)));
+    glVertexAttribPointer(3 + 3, 4, GL_FLOAT, GL_FALSE, sizeof(Matrix), (GLvoid*)(offsetof(Matrix, d0)));
+    //Only apply one per instance
+    glVertexAttribDivisor(3 + 0, 1);
+    glVertexAttribDivisor(3 + 1, 1);
+    glVertexAttribDivisor(3 + 2, 1);
+    glVertexAttribDivisor(3 + 3, 1);
+}
+```
+In this example we are using attribute location 3 as a start location for the transform matrix. Since it is a matrix we need to activate 4 consecutive vertex attrib arrays and upload the data as 4 vec4. The reason for this is that glVertexAttribPointer can only handle a maximum of 4 components per vertex attribute (the second parameter). If you are wondering, Matrix is just a convenience struct that looks like this:
+
+```c++
+struct Matrix
+{
+    float a0, a1, a2, a3;
+    float b0, b1, b2, b3;
+    float c0, c1, c2, c3;
+    float d0, d1, d2, d3;
+};
+```
+
+It is left as an exercise to the reader to try and make one (or more) objects rotate. (hint: glMapBuffer)
+
+```c++
+void GenerateArrayTexture()
+{
+    //Generate an array texture
+    glGenTextures(1, &gArrayTexture);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, gArrayTexture);
+
+    //Create storage for the texture. (100 layers of 1x1 texels)
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY,
+        1,                    //No mipmaps as textures are 1x1
+        GL_RGB8,              //Internal format
+        1, 1,                 //width,height
+        100                   //Number of layers
+    );
+
+    for (unsigned int i(0); i != 100; ++i)
+    {
+        //Choose a random color for the i-essim image
+        GLubyte color[3] = { GLubyte(rand() % 255),GLubyte(rand() % 255),GLubyte(rand() % 255) };
+
+        //Specify i-essim image
+        glTexSubImage3D(GL_TEXTURE_2D_ARRAY,
+            0,                     //Mipmap number
+            0, 0, i,               //xoffset, yoffset, zoffset
+            1, 1, 1,               //width, height, depth
+            GL_RGB,                //format
+            GL_UNSIGNED_BYTE,      //type
+            color);                //pointer to data
+    }
+
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+```
+Generating the textures are quite simple in this example. We start by creating a 3D texture storage for 100 different textures, then populate it with our generated data. What we have done here is creating a basic texture array. See below in the fragment shader to see how it is used.
+
+Lastly we will take a look at our shaders, starting with the vertex shader
+
+```hlsl
+//Vertex Shader
+#version 430 core
+
+layout (location = 0 ) in vec2 position;
+layout (location = 1 ) in vec2 texCoord;
+layout (location = 2 ) in uint drawid;
+layout (location = 3 ) in mat4 instanceMatrix;
+//locations 4,5,6 is also take by instanceMatrix
+
+layout (location = 0 ) out vec2 uv;
+layout (location = 1 ) flat out uint drawID;
+
+void main(void)
+{
+  uv = texCoord;
+  drawID = drawid;
+  gl_Position = instanceMatrix * vec4(position,0.0,1.0);
+}
+```
+
+Only one small interesting thing is happening here and that is that we disable interpolation for drawid using the `flat` keyword.
+
+```hlsl
+//Fragment Shader
+#version 430 core
+
+layout (location = 0 ) in vec2 uv;
+layout (location = 1 ) flat in uint drawID;
+
+layout (location = 0) out vec4 color;
+
+layout (binding = 0) uniform sampler2DArray textureArray;
+
+void main(void)
+{
+  color = texture(textureArray, vec3(uv.x, uv.y, drawID) );
+}
+```
+The fragment shader is just as uninteresting as the vertex shader. Note that we use the drawID to look into the 2D texture array to find the texture we are interested in.
+
+## The End
+So this is a small example on how to use `glMultiDrawElementsIndirect` (and indirectly how `glMultiDrawArraysIndirect`).
+
+A small challenge for the reader would be to update the transform matrices each frame (Hint: `glMapBuffer` or similar). Doing this would make the example able to almost work as a sprite renderer.
+Another challenge would to upload individual sprite textures with the same size. Sadly I have no idea at the moment on how to work with different sized sprites.
+
+I hope that this foray into OpenGLs MultiDrawElementsIndirect have been helpful for you!
+
+Until next time
+/Jakob Törmä Ruhl
