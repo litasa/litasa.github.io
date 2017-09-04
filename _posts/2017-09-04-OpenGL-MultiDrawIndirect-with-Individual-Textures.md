@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "OpenGL MultiDrawIndirect with per-draw constants and textures"
+title: "OpenGL MultiDrawIndirect with per-instance textures"
 tags: [OpenGL, Techniques, Tutorial]
 comments: true
 ---
@@ -8,6 +8,7 @@ comments: true
 I saw an interesting talk the other day, "[High-performance, Low-Overhead Rendering with OpenGL and Vulkan](https://youtu.be/PPWysKFHq9c)" where [Mathias Schott](https://twitter.com/m_mschott) talked about two OpenGL commands called [glMultiDrawArraysIndirect](https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glMultiDrawArraysIndirect.xhtml) and [glMultiDrawElementsIndirect](https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glMultiDrawElementsIndirect.xhtml). These two commands give OpenGL the ability to draw multiple objects with vastly different geometries using only "one" draw call. Sounds cool right? So let's take a deeper dive into OpenGLs Multi Draw Indirect commands.
 
 # What does it do
+
 OpenGLs Multi Draw Indirect commands have the following structure:
 ```c++
 void glMultiDrawArraysIndirect(
@@ -29,30 +30,7 @@ void glMultiDrawElementsIndirect(
 * `drawcount` is the number of objects to draw
 * `stride` is the distance between each draw command. 0 means tightly packed
 
-The struct is called a draw command and have the following structure
-```c++
-typedef  struct {
-        unsigned int  count;
-        unsigned int  instanceCount;
-        unsigned int  firstIndex;
-        unsigned int  baseInstance;
-} DrawArraysIndirectCommand;
-
-typedef  struct {
-        unsigned int  count;
-        unsigned int  instanceCount;
-        unsigned int  firstIndex;
-        unsigned int  baseVertex;
-        unsigned int  baseInstance;
-} DrawElementsIndirectCommand;
-```
-* `count` refers to the number of used vertices
-* `instanceCount` is the number of instances to draw of the current object
-* `firstIndex` is the location of the first vertex relative the current object
-* `baseVertex` (ONLY DrawElementsIndirectCommand) location of current objects first vertex relative buffer
-* `baseInstance` is the current instance for the indirect draw
-
-What glMultiDrawElementsIndirect does is the following (assuming no errors generated):
+What glMultiDrawElementsIndirect does is equivalent to the following (assuming no errors generated):
 ```c++
 GLsizei n;
 for (n = 0; n < drawcount; n++)
@@ -77,7 +55,30 @@ for (n = 0; n < drawcount; n++)
 * `mode` is what primitive to draw. Taken directly from the MultiDraw command
 * `type` specifies the type of indices. Also taken directly from the MultiDraw command
 
-glMultiDrawArraysIndirect behaves similarly.
+Basically we are calling one draw call multiple times. [According to the documentation](https://www.khronos.org/registry/OpenGL-Refpages/gl4/) the Multi Draw Indirect performs few subrutine calls.
+
+The struct is called a draw command and have the following structure
+```c++
+typedef  struct {
+        unsigned int  count;
+        unsigned int  instanceCount;
+        unsigned int  firstIndex;
+        unsigned int  baseInstance;
+} DrawArraysIndirectCommand;
+
+typedef  struct {
+        unsigned int  count;
+        unsigned int  instanceCount;
+        unsigned int  firstIndex;
+        unsigned int  baseVertex;
+        unsigned int  baseInstance;
+} DrawElementsIndirectCommand;
+```
+* `count` refers to the number of used vertices
+* `instanceCount` is the number of instances to draw of the current object
+* `firstIndex` is the location of the first vertex relative the current object
+* `baseVertex` (ONLY DrawElementsIndirectCommand) location of current objects first vertex relative buffer
+* `baseInstance` is the current instance for the indirect draw
 
 The descriptions does not really help your understanding on how to use the glMultiDrawIndirect commands, so let's take a look at one example.
 
@@ -95,6 +96,8 @@ The picture below is what we are going to end up with. Nothing too exiting, but 
 
 ## The Code
 The full code can be found [here](https://github.com/litasa/Advanced-OpenGL-Examples/blob/master/src/MultidrawIndirect/MultidrawIndirect.cpp).
+
+
 Let us just jump right in looking at the code, starting where the action happens; the render loop.
 
 ```cpp
@@ -192,7 +195,7 @@ void GenerateGeometry()
     glVertexAttribDivisor(3 + 3, 1);
 }
 ```
-In this example we are using attribute location 3 as a start location for the transform matrix. Since it is a matrix we need to activate 4 consecutive vertex attrib arrays and upload the data as 4 vec4. The reason for this is that glVertexAttribPointer can only handle a maximum of 4 components per vertex attribute (the second parameter). If you are wondering, Matrix is just a convenience struct that looks like this:
+In this example we are using attribute location 3 as a start location for the transform matrix. Since it is a matrix we need to activate 4 consecutive vertex attrib arrays and upload the data as 4 vec4. The reason for this is that `glVertexAttribPointer` can only handle a maximum of 4 components per vertex attribute (the second parameter). If you are wondering, Matrix is just a convenience struct that looks like this:
 
 ```c++
 struct Matrix
@@ -204,7 +207,7 @@ struct Matrix
 };
 ```
 
-It is left as an exercise to the reader to try and make one (or more) objects rotate. (hint: glMapBuffer)
+Generating the textures are quite simple in this example. We start by creating a 3D texture storage for 100 different textures, then populate it with our generated data. What we have done here is creating a basic texture array. See below in the fragment shader to see how it is used.
 
 ```c++
 void GenerateArrayTexture()
@@ -243,7 +246,6 @@ void GenerateArrayTexture()
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 ```
-Generating the textures are quite simple in this example. We start by creating a 3D texture storage for 100 different textures, then populate it with our generated data. What we have done here is creating a basic texture array. See below in the fragment shader to see how it is used.
 
 Lastly we will take a look at our shaders, starting with the vertex shader
 
@@ -268,7 +270,7 @@ void main(void)
 }
 ```
 
-Only one small interesting thing is happening here and that is that we disable interpolation for drawid using the `flat` keyword.
+Only one small interesting thing is happening here and that is that we disable interpolation for drawID using the `flat` keyword.
 
 ```hlsl
 //Fragment Shader
@@ -293,8 +295,6 @@ So this is a small example on how to use `glMultiDrawElementsIndirect` (and indi
 
 A small challenge for the reader would be to update the transform matrices each frame (Hint: `glMapBuffer` or similar). Doing this would make the example able to almost work as a sprite renderer.
 Another challenge would to upload individual sprite textures with the same size. Sadly I have no idea at the moment on how to work with different sized sprites.
+For those interested I recommend playing around with the values in the draw command and try to understand what each value really does.
 
 I hope that this foray into OpenGLs MultiDrawElementsIndirect have been helpful for you!
-
-Until next time
-/Jakob Törmä Ruhl

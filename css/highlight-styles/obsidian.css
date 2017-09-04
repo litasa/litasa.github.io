@@ -3,6 +3,12 @@
  * ported by Alexander Marenin (http://github.com/ioncreature)
  */
  
+code {
+    border-radius: 5px;
+    border: 1px hidden;
+    background: #B0B0B0;
+}
+ 
 .hljs {
     display: block;
     background: #282B2E;
