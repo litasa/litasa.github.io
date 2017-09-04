@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "OpenGL MultiDrawIndirect with per-instance textures"
-tags: [OpenGL, Techniques, Tutorial]
+tags: [OpenGL, Tutorial]
 comments: true
 ---
 
