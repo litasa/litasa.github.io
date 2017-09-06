@@ -357,6 +357,9 @@ img {
 }
 @media only screen and (max-width: 48em)
 {
+  html,body {
+    font-size: 18px;
+}
   .module {
     margin: 0em;
     padding: 0.5em;
