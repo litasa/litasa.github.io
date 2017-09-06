@@ -336,8 +336,10 @@ a.sidebar-nav-item:focus {
   color: #202020;
 }
 
-.image {
-
+img {
+  max-width: 100%;
+  height: auto;
+  width: auto\9; /* ie8 */
 }
 
 .image-text {
@@ -353,16 +355,18 @@ a.sidebar-nav-item:focus {
   width: 80%;
   margin-left: 3.5em;
 }
-@media (max-width: 48em)
+@media only screen and (max-width: 48em)
 {
   .module {
     margin: 0em;
     padding: 0.5em;
+    overflow: auto;
   }
 
   .main_page {
     margin: 0em;
   }
+
   .markdown-content {
     width: 80%;
     margin: 0.01em;
