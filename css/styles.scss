@@ -353,3 +353,18 @@ a.sidebar-nav-item:focus {
   width: 80%;
   margin-left: 3.5em;
 }
+@media (max-width: 48em)
+{
+  .module {
+    margin: 0em;
+    padding: 0.5em;
+  }
+
+  .main_page {
+    margin: 0em;
+  }
+  .markdown-content {
+    width: 80%;
+    margin: 0.01em;
+  }
+}
