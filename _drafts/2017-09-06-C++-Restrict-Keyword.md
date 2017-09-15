@@ -130,6 +130,10 @@ Now we know what we promise the compiler, but what happens if we break that prom
 
 So the **restrict** keyword is not part of the standard in C++, but is often implemented as a compiler specific keyword, using either **__restrict** or **__restrict__** syntax. So look up which compiler you are using and what flags are needed to enable this optimization.
 
+**restrict** is a type qualifier which means it should be specified after the * like this
+```c++
+int * __restrict ptr;
+```
 
 ## So what does it do?!
 
