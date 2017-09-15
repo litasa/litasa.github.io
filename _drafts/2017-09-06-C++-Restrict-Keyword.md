@@ -137,10 +137,27 @@ int * __restrict ptr;
 
 ## So what does it do?!
 
-Let us take a look at the original example again, now introducing the restrict keyword
+Let us take a look at the original example again, now with the introduced restrict keyword. Let us try somethings out and see if we have learned anything. So because `c` was loaded twice the compiler thought that `x` and `c` was aliased (pointing to the same memory location). That should mean that if either `x` or `c` (or both) is **restrict**ed the compiler should be able to generate more optimized code.
 ```c++
 void foo(int * x, int * y, int * __restrict c) {
   *x += *c;
   *y += *c;
 }
+void foo(int * __restrict x, int * y, int * c) {
+  *x += *c;
+  *y += *c;
+}
+void foo(int * __restrict x, int * y, int *__restrict c) {
+  *x += *c;
+  *y += *c;
+}
+```
+All three variants generate the following asembler code.
+```x86asm
+foo(int*, int*, int*):
+// x is in rdi, y is in rsi, c is in rdx
+  mov eax, DWORD PTR [rdx]
+  add DWORD PTR [rdi], eax
+  add DWORD PTR [rsi], eax
+  ret
 ```
