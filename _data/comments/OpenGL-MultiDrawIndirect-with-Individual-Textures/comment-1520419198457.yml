@@ -1,0 +1,17 @@
+_id: e1926f40-21f3-11e8-a2b2-bb1a543b87b2
+_parent: >-
+  https://litasa.github.io/blog/2017/09/04/OpenGL-MultiDrawIndirect-with-Individual-Textures
+name: Mason Cudlitz
+email: f40509c0981255187cc1c0c54ba7f7b1
+url: ''
+message: >-
+  I can't believe this has no comments, since it's essentially the only
+  practical example of how to use this that exists. Thank you so much for
+  writing this! I'm having a little bit of trouble getting it to work on my end,
+  but this post helped me get my implementation from not rendering at all to
+  rendering incorrectly, which is a huge step.
+replying_to: ''
+hidden: ''
+date: '2018-03-07T10:39:58.456Z'
+tags:
+  - comment-subscription
